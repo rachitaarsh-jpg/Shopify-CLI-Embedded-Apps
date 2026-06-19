@@ -32,3 +32,11 @@ model Session {
   refreshToken        String?
   refreshTokenExpires DateTime?
 }
+
+// 1. This is our new database table!
+model StoreNote {
+  id        Int      @id @default(autoincrement())
+  shop      String   @unique  // We link the note to the specific shop domain
+  note      String   // This will store the actual text
+  createdAt DateTime @default(now())
+}
