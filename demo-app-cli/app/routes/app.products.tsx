@@ -54,10 +54,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     // 'productId' matches the name="productId" attribute of the hidden input in our form
     const productId = formData.get("productId") as String;
 
-    // 2. Tell Shopify to add a tag using a GraphQL Mutation
-    // A Mutation is just a Query that changes data instead of just reading it.
-    const response = await admin.graphql(
-        `#graphql
+    // Grab the intent to see which button the user clicked
+    const intent = formData.get("intent");
+
+    if (intent === "add_tag") {
+        await admin.graphql(
+            // Tell Shopify to add a tag using a GraphQL Mutation
+            // A Mutation is just a Query that changes data instead of just reading it.
+            `#graphql
             mutation addProductTag($id : ID!, $tags:[String!]!) {
                 tagsAdd(id: $id, tags: $tags) {
                     userErrors {
@@ -66,15 +70,32 @@ export const action = async ({ request }: ActionFunctionArgs) => {
                 }
             }
         `,
-        {
-            // These variables are injected into the GraphQL mutation above
+            {
+                // These variables are injected into the GraphQL mutation above
+                variables: {
+                    id: productId,
+                    tags: ["Awesome"] // The tag we want to add!
+                },
+            }
+        );
+    } else if (intent === "remove_tag") {
+        await admin.graphql(
+            `#graphql 
+            mutation removeProductTag($id:ID!, $tags:[String!]!){
+            tagsRemove(id:$id, tags: $tags){
+                            userErrors{
+                            message
+                            }
+            }
+            }`, {
             variables: {
                 id: productId,
-                tags: ["Awesome"] // The tag we want to add!
-            },
+                tags: ["Awesome"]
+            }
         }
-    );
-    
+        );
+    }
+
     // Actions usually return a success message or redirect the user
     return { success: true };
 }
@@ -103,7 +124,7 @@ export default function ProductsPage() {
                     {products.map((edge: any) => (
                         // Every item in a React list needs a unique 'key'
                         <li key={edge.node.id} style={{ paddingBottom: "20px" }}>
-                            
+
                             {/* Product Title */}
                             <strong>{edge.node.title}</strong>
 
@@ -115,14 +136,22 @@ export default function ProductsPage() {
 
                             {/* The form to submit the Mutation. 
                                 We use fetcher.Form so it happens in the background. */}
-                            <fetcher.Form method="post">
+                            <fetcher.Form method="post"
+                                style={{ display: "flex", gap: "10px" }}>
                                 {/* This hidden input secretly passes the product ID to our action */}
                                 <input type="hidden" name="productId" value={edge.node.id} />
-                                
-                                {/* Clicking this submit button triggers the action function at the top of the file */}
-                                <s-button type="submit" style={{ padding: "5px 10px", cursor: "pointer" }}>
+
+                                {/* Notice the name="intent" and value="add_tag" */}
+                                <button type="submit" name="intent" value="add_tag"
+                                    style={{ padding: "5px 10px", cursor: "pointer" }}>
                                     Add 'Awesome' Tag
-                                </s-button>
+                                </button>
+
+                                {/* Notice the name="intent" and value="remove_tag" */}
+                                <button type="submit" name="intent" value="remove_tag"
+                                    style={{ padding: "5px 10px", cursor: "pointer" }}>
+                                    Remove 'Awesome' Tag
+                                </button>
                             </fetcher.Form>
 
                         </li>
