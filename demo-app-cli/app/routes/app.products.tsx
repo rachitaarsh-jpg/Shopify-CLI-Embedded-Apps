@@ -26,6 +26,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
     const responseJson = await response.json();
 
+    // Log to see what does shopify returns for the query
+    console.log("SHOPIFY DATA: ", JSON.stringify(responseJson, null, 2));
+
     // We return the array of products to the frontend
     return {
         products: responseJson.data.products.edges,
