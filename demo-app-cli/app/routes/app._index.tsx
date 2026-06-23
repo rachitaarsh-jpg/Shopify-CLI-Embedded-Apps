@@ -108,7 +108,6 @@ export default function Index() {
             {isSaving ? "Saving..." : "Save Note to Database"}
           </s-button>
         </fetcher.Form>
-
       </s-section>
 
       <s-section slot="aside" heading="App template specs">
