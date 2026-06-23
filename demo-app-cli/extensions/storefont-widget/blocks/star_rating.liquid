@@ -1,0 +1,61 @@
+<!-- ==========================================
+  PART 1: THE VISUAL WIDGET (HTML & LIQUID)
+=========================================== -->
+<!-- 
+  This section uses HTML for structure and 'Liquid' for dynamic data.
+  Liquid variables are always wrapped in double curly braces: {{ variable_name }}
+-->
+
+<!-- 1. We use {{ block.settings.border_color }} to grab the color the merchant selected in the Theme Editor -->
+<div style="border: 2px solid {{ block.settings.border_color }}; padding: 15px; border-radius: 8px; text-align: center; margin-top: 20px;">
+  
+  <!-- 2. Because this widget is placed on a Product Page, Shopify automatically gives us access to a 'product' object.
+       We can print the current product's title dynamically using {{ product.title }} -->
+  <h3 style="margin-top: 0;">Special Offer for {{ product.title }}!</h3>
+  
+  <!-- 3. We print out the custom text the merchant typed into the 'marketing_text' text box -->
+  <p>{{ block.settings.marketing_text }}</p>
+  
+  <button style="background: black; color: white; padding: 10px 20px; border: none; cursor: pointer;">
+    Claim Offer
+  </button>
+</div>
+
+
+<!-- ==========================================
+  PART 2: THE SCHEMA (CONFIGURATION)
+=========================================== -->
+{% schema %}
+{
+  // 1. The name that appears in the Theme Editor "Add block" menu
+  "name": "Custom Product Offer",
+
+  // 2. "target": "section" means this widget acts as a standalone section on the page.
+  //    (If it was "target": "block", it could be nested inside other sections).
+  "target": "section",
+
+  // 3. This restricts WHERE the widget can be placed. 
+  //    "product" means it will only show up if the merchant is editing a Product page.
+  "enabled_on": {
+    "templates": ["product"]
+  },
+
+  // 4. Settings are the controls that appear on the right-hand menu in the Theme Editor.
+  "settings": [
+    {
+      // A standard text input box
+      "type": "text",
+      "id": "marketing_text",  // This ID is how we reference it in the HTML above!
+      "label": "Marketing Text",
+      "default": "Buy now and get 20% off your next order!"
+    },
+    {
+      // A color picker tool
+      "type": "color",
+      "id": "border_color",
+      "label": "Box Border Color",
+      "default": "#ff0000"
+    }
+  ]
+}
+{% endschema %}
