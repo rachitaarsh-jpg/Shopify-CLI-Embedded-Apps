@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
-import { useLoaderData, useFetcher } from "react-router";
+import { useLoaderData, useFetcher, Link } from "react-router";
 import { authenticate } from "../shopify.server";
 
 // =====================================================================
@@ -125,8 +125,10 @@ export default function ProductsPage() {
                         // Every item in a React list needs a unique 'key'
                         <li key={edge.node.id} style={{ paddingBottom: "20px" }}>
 
-                            {/* Product Title */}
-                            <strong>{edge.node.title}</strong>
+                            {/* Product Title is now a clickable link! */}
+                            <Link to={`/app/products/${edge.node.id.split("/").pop()}`}>
+                                <strong>{edge.node.title}</strong>
+                            </Link>
 
                             {/* Display the tags we fetched. 
                                 .join(",") turns an array like ["A", "B"] into a string "A,B" */}
