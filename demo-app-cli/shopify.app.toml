@@ -44,8 +44,8 @@ api_version = "2026-07"
   uri = "/webhooks/app/scopes_update"
   topics = [ "app/scopes_update" ]
 
- # --- Webhook subscription for Proudcts Update ---
-  [[webhook.subscriptions]]
+ # --- Webhook subscription for Products Update ---
+  [[webhooks.subscriptions]]
   uri="/webhooks/products/update"
   topics = ["products/update"]
   
